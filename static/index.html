@@ -4,114 +4,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Car Recognition & Specs | Advanced Automotive Intelligence</title>
+    <title>AI - Car Recognition</title>
     <meta name="description"
-        content="State-of-the-art AI-powered car recognition system with real-time engine specifications and detailed automotive analytics">
+        content="State-of-the-art AI-powered car recognition system with real-time engine specifications.">
+
+    <!-- Fonts: Inter & JetBrains Mono (similar to Next.js font stack) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-        <div class="grid-overlay"></div>
-    </div>
-
     <!-- Main Container -->
     <div class="container">
         <!-- Header -->
         <header class="header">
             <div class="logo-section">
                 <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M19 17H5C3.89543 17 3 16.1046 3 15V9C3 7.89543 3.89543 7 5 7H19C20.1046 7 21 7.89543 21 9V15C21 16.1046 20.1046 17 19 17Z"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M3 11H8L10 7H14L16 11H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <circle cx="7.5" cy="14" r="1.5" fill="currentColor" />
-                        <circle cx="16.5" cy="14" r="1.5" fill="currentColor" />
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 19H22L12 2Z" />
                     </svg>
                 </div>
                 <div class="logo-text">
-                    <h1>AutoVision<span class="ai-badge">AI</span></h1>
-                    <p class="tagline">Advanced Automotive Intelligence</p>
+                    <h1>AutoVision</h1>
                 </div>
             </div>
 
+            <!-- Minimal Stats (Optional, keep if useful but made minimal) -->
             <div class="stats-bar">
                 <div class="stat-item">
+                    <span class="stat-label">Models:</span>
                     <span class="stat-value" id="models-count">0</span>
-                    <span class="stat-label">Models</span>
                 </div>
-                <div class="stat-divider"></div>
                 <div class="stat-item">
+                    <span class="stat-label">Scans:</span>
                     <span class="stat-value" id="scans-count">0</span>
-                    <span class="stat-label">Scans</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <span class="stat-value pulse-dot"></span>
-                    <span class="stat-label">AI Active</span>
                 </div>
             </div>
         </header>
 
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">The AI Framework<br>for Car Recognition</h1>
+            <p class="hero-subtitle">
+                AutoVision enables you to identify vehicles and access
+                detailed specifications instantly.
+            </p>
+        </section>
+
         <!-- Upload Section -->
-        <section class="upload-section glass-card">
+        <section class="upload-section">
             <div class="upload-area" id="upload-area">
                 <input type="file" id="file-input" accept="image/*" hidden>
+
                 <div class="upload-content" id="upload-content">
                     <div class="upload-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-linecap="round"
                                 stroke-linejoin="round" />
-                            <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
+                            <polyline points="17 8 12 3 7 8" stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="12" y1="3" x2="12" y2="15" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <h2 class="upload-title">Drop your car image here</h2>
-                    <p class="upload-subtitle">or click to browse</p>
-                    <div class="upload-formats">Supports JPG, PNG, WEBP</div>
+                    <h2 class="upload-title">Deploy your Image</h2>
+                    <p class="upload-subtitle">Drag and drop or click to upload</p>
+                    <div class="upload-formats">JPG · PNG · WEBP</div>
                 </div>
 
                 <!-- Preview State -->
                 <div class="preview-state hidden" id="preview-state">
                     <img id="preview-image" src="" alt="Preview">
-                    <button class="remove-btn" id="remove-btn">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" />
+                    <button class="remove-btn" id="remove-btn" title="Remove image">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Analyze Button -->
-            <button class="analyze-btn" id="analyze-btn" disabled>
-                <span class="btn-text">Analyze Vehicle</span>
-                <span class="btn-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
+            <div style="display: flex; justify-content: center;">
+                <button class="analyze-btn" id="analyze-btn" disabled>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
-                </span>
-            </button>
+                    Start Analysis
+                </button>
+            </div>
 
             <!-- Loading State -->
             <div class="loading-state hidden" id="loading-state">
                 <div class="loading-spinner"></div>
-                <p class="loading-text">Analyzing vehicle with AI...</p>
+                <p class="loading-text">Compiling vehicle data...</p>
                 <div class="loading-progress">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
@@ -120,17 +110,11 @@
 
         <!-- Results Section -->
         <section class="results-section hidden" id="results-section">
-            <!-- Main Recognition Card -->
-            <div class="recognition-card glass-card">
+            <div class="recognition-card">
                 <div class="card-header">
-                    <h3 class="card-title">Vehicle Identification</h3>
+                    <h3 class="card-title">Analysis Results</h3>
                     <div class="confidence-badge" id="overall-confidence">
-                        <svg class="confidence-icon" viewBox="0 0 24 24" fill="none">
-                            <path
-                                d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <span id="confidence-value">0%</span>
+                        <span id="confidence-value">0%</span> Confidence
                     </div>
                 </div>
 
@@ -143,24 +127,25 @@
                         <span class="info-label">Year</span>
                         <span class="info-value" id="car-year">—</span>
                     </div>
-                    <div class="confidence-breakdown">
-                        <div class="breakdown-item">
-                            <div class="breakdown-header">
-                                <span class="breakdown-label">Model Confidence</span>
-                                <span class="confidence-percent" id="model-confidence-text">0%</span>
-                            </div>
-                            <div class="confidence-bar">
-                                <div class="confidence-fill" id="model-confidence-fill"></div>
-                            </div>
+                </div>
+
+                <div class="confidence-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-header">
+                            <span>Model Match</span>
+                            <span id="model-confidence-text">0%</span>
                         </div>
-                        <div class="breakdown-item">
-                            <div class="breakdown-header">
-                                <span class="breakdown-label">Year Confidence</span>
-                                <span class="confidence-percent" id="year-confidence-text">0%</span>
-                            </div>
-                            <div class="confidence-bar">
-                                <div class="confidence-fill" id="year-confidence-fill"></div>
-                            </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="model-confidence-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-header">
+                            <span>Year Match</span>
+                            <span id="year-confidence-text">0%</span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="year-confidence-fill" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
