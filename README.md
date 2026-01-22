@@ -20,6 +20,7 @@ Pure HTML5, CSS3, vanilla JavaScript – no heavy frameworks, lightning‑fast.
 Custom design system – CSS variables for colours, spacing, typography.
 Google Fonts – Inter for body text, Orbitron for headings.
 📦 Setup Instructions
+
 1️⃣ Start the FastAPI backend
 bash
 ~~~
@@ -48,7 +49,7 @@ Upload an image – click the upload area or drag a car picture onto it (JPG/PNG
 Analyze – press “Start Analysis”. The UI shows a loading spinner while the AI processes the image.
 View results – the recognized make/model/year appear, confidence bars fill, and a grid of spec cards animates into view.
 🎨 Design System (CSS Variables)
-All colours, fonts, and spacing live in 
+All colours, fonts, and spacing live in static/style.css
 ~~~
 css
 :root {
