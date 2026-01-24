@@ -25,6 +25,7 @@ const elements = {
     previewImage: document.getElementById('preview-image'),
     removeBtn: document.getElementById('remove-btn'),
     analyzeBtn: document.getElementById('analyze-btn'),
+    testImageBtn: document.getElementById('test-image-btn'),
     loadingState: document.getElementById('loading-state'),
     resultsSection: document.getElementById('results-section'),
     modelsCount: document.getElementById('models-count'),
@@ -55,10 +56,22 @@ function init() {
 function setupEventListeners() {
     // Upload area click
     elements.uploadArea.addEventListener('click', (e) => {
-        if (!e.target.closest('.remove-btn') && !state.isAnalyzing) {
-            elements.fileInput.click();
+        // Prevent file input if clicking buttons
+        if (e.target.closest('.remove-btn') ||
+            e.target.closest('.test-image-btn') ||
+            state.isAnalyzing) {
+            return;
         }
+        elements.fileInput.click();
     });
+
+    // Test Image button
+    if (elements.testImageBtn) {
+        elements.testImageBtn.addEventListener('click', async (e) => {
+            e.stopPropagation(); // Double check to prevent bubbling
+            handleTestImage();
+        });
+    }
 
     // File input change
     elements.fileInput.addEventListener('change', handleFileSelect);
@@ -119,10 +132,55 @@ function loadFile(file) {
     reader.readAsDataURL(file);
 }
 
+async function handleTestImage() {
+    if (state.isAnalyzing) return;
+
+    const btn = elements.testImageBtn;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span>Loading...</span>';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+
+    try {
+        // 1. Get random image URL
+        const response = await fetch('/random_test_car');
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error);
+
+        // 2. Fetch the actual image blob
+        const imgResponse = await fetch(data.url);
+        const blob = await imgResponse.blob();
+
+        // 3. Create File object
+        const filename = data.url.split('/').pop();
+        const file = new File([blob], filename, { type: blob.type });
+
+        // 4. Load it
+        loadFile(file);
+
+
+
+    } catch (error) {
+        console.error('Test image error:', error);
+        showError('Failed to load test image');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    }
+}
+
 function showPreview() {
     elements.uploadContent.classList.add('hidden');
     elements.previewState.classList.remove('hidden');
-    elements.analyzeBtn.disabled = false;
+
+    // Only enable button if not currently analyzing
+    if (!state.isAnalyzing) {
+        elements.analyzeBtn.disabled = false;
+        elements.analyzeBtn.classList.remove('hidden');
+    }
+
     elements.resultsSection.classList.add('hidden');
 }
 

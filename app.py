@@ -6,7 +6,7 @@ import torchvision.transforms as T
 from PIL import Image
 import io
 import requests
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -14,7 +14,7 @@ import os
 
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434/api/generate")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434/api/generate")
 
 MODEL_PATH = "saved_models/resnet50_compcars_20260111_154612.pth"
 YEAR_MODEL_PATH = "saved_models/multitask_car_net.pth"
@@ -173,69 +173,91 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def serve_frontend():
     return FileResponse(os.path.join("static", "index.html"))
 
+@app.get("/random_test_car")
+def get_random_test_car():
+    test_cars_dir = os.path.join("static", "test_cars")
+    if not os.path.exists(test_cars_dir):
+        return {"error": "Test directory not found"}
+        
+    images = [f for f in os.listdir(test_cars_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    if not images:
+        return {"error": "No images found"}
+    
+    import random
+    selected_image = random.choice(images)
+    # Return absolute URL path
+    image_url = f"/static/test_cars/{selected_image}"
+    return {"url": image_url}
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    img_bytes = await file.read()
-    image = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-    tensor = transform(image).unsqueeze(0).to(DEVICE)
-
-    with torch.no_grad():
-        import torch.nn.functional as F
-
-        feats = backbone(tensor)
-
-        model_logits = model_head(feats)
-        year_logits  = year_head(feats)
-
-        model_probs = F.softmax(model_logits, dim=1)
-        year_probs  = F.softmax(year_logits, dim=1)
-
-        model_conf, model_idx = model_probs.max(1)
-        year_conf,  year_idx  = year_probs.max(1)
-
-        car  = idx_to_class[model_idx.item()]
-        year = idx_to_year[year_idx.item()]
-
-        model_confidence = float(model_conf.item())
-        year_confidence  = float(year_conf.item())
-
-    key = f"{car}_{year}"
-
-    output = {
-        "car": car,
-        "year": year,
-        "confidence": {
-            "model": model_confidence,
-            "year": year_confidence
-        },
-        "engine": {}
-    }
-
-    if key in engine_db:
-        for k, v in engine_db[key].items():
-            output["engine"][k] = {
-                "value": v,
-                "source": "CompCars",
-                "confidence": 1.0
-            }
-
-    prompt = build_prompt(car, year)
-    gemma_out = ask_gemma(prompt)
-
-    gemma_out = gemma_out.strip().strip("`").replace("json", "", 1).strip()
-
     try:
-        inferred = json.loads(gemma_out)
+        img_bytes = await file.read()
+        image = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        tensor = transform(image).unsqueeze(0).to(DEVICE)
 
-        for k, obj in inferred.items():
-            output["engine"][k] = {
-                "value": obj["value"],
-                "source": "Gemma",
-                "confidence": float(obj["confidence"])
-            }
+        with torch.no_grad():
+            import torch.nn.functional as F
+
+            feats = backbone(tensor)
+
+            model_logits = model_head(feats)
+            year_logits  = year_head(feats)
+
+            model_probs = F.softmax(model_logits, dim=1)
+            year_probs  = F.softmax(year_logits, dim=1)
+
+            model_conf, model_idx = model_probs.max(1)
+            year_conf,  year_idx  = year_probs.max(1)
+
+            car  = idx_to_class[model_idx.item()]
+            year = idx_to_year[year_idx.item()]
+
+            model_confidence = float(model_conf.item())
+            year_confidence  = float(year_conf.item())
+
+        key = f"{car}_{year}"
+
+        output = {
+            "car": car,
+            "year": year,
+            "confidence": {
+                "model": model_confidence,
+                "year": year_confidence
+            },
+            "engine": {}
+        }
+
+        if key in engine_db:
+            for k, v in engine_db[key].items():
+                output["engine"][k] = {
+                    "value": v,
+                    "source": "CompCars",
+                    "confidence": 1.0
+                }
+
+        prompt = build_prompt(car, year)
+        
+        try:
+            gemma_out = ask_gemma(prompt)
+            gemma_out = gemma_out.strip().strip("`").replace("json", "", 1).strip()
+            
+            inferred = json.loads(gemma_out)
+
+            for k, obj in inferred.items():
+                output["engine"][k] = {
+                    "value": obj["value"],
+                    "source": "Gemma",
+                    "confidence": float(obj["confidence"])
+                }
+        except Exception as e:
+            print(f"LLM Error: {e}")
+            output["llm error"] = str(e)
+
+        return output
 
     except Exception as e:
-        output["llm error"] = gemma_out
-
-    return output
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
