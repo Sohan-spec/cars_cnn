@@ -33,4 +33,4 @@ docker-compose.override.yml
 # Logs
 *.log
 
-saved_models.zip
+D:\CompCars\CARS_CNN\static\test_cars.zip
