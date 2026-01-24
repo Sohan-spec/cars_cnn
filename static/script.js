@@ -164,7 +164,7 @@ async function analyzeImage() {
         updateStats();
     } catch (error) {
         console.error('Analysis error:', error);
-        showError('Failed to analyze image. Make sure the FastAPI server is running on port 8000.');
+        showError('Failed to analyze image. The API request to /predict failed.');
     } finally {
         state.isAnalyzing = false;
         elements.loadingState.classList.add('hidden');
