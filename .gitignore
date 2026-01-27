@@ -36,3 +36,5 @@ docker-compose.override.yml
 
 static/
 test_cars
+
+saved_models.zip
